@@ -3324,7 +3324,12 @@ function! tagbar#currenttag(fmt, default, ...) abort
         if prototype
             return tag.getPrototype(1)
         else
-            return printf(a:fmt, tag.str(longsig, fullpath))
+            let tag_return_info = {
+                        \ 's': tag.str(longsig, fullpath),
+                        \ 'L': tag.fields.line,
+                        \ 'l': line(".") - tag.fields.line,
+                        \}
+            return join(map(split(a:fmt, "%", 1), { k,v -> (k>0 ? tag_return_info[v[0]].v[1:] : "") }), "")
         endif
     else
         return a:default
